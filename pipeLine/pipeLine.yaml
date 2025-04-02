@@ -33,12 +33,12 @@ Parameters:
     Default: ""
     Description: Name of the CloudFormation stack.
 
-
-
   GitHubOwner:
     Type: String
     Default: ""
     Description: GitHub username or organization.
+
+
 
   GitHubRepo:
     Type: String
