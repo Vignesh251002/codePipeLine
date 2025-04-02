@@ -5,7 +5,7 @@ arg=$1
 echo $arg
 
 # Source the environment variables from the given file
-source ./env/$arg.sh
+source ../env/$arg.sh
 
 echo "Environment Variables Successfully Imported!"
 echo "==========================================="
