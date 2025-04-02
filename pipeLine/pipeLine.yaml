@@ -37,9 +37,6 @@ Parameters:
     Type: String
     Default: ""
     Description: GitHub username or organization.
-
-
-
   GitHubRepo:
     Type: String
     Default: ""
