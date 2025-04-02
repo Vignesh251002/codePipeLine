@@ -8,11 +8,9 @@ Parameters:
   ResourcePrefix:
     Type: String
     Default: ""  
-
   Tags:
     Type: String
     Default: ""
-
   ArtifactBucketName:
     Type: String
     Default: ""
