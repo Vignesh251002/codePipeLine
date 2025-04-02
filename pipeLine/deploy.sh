@@ -12,6 +12,9 @@ echo "Environment Variable successfully Imported"
 # Deploy CloudFormation stack using AWS SAM
 echo "Deploying AWS CloudFormation Pipeline..."
 
+
+
+
 sam deploy \
     -t "${TemplateFile}" \
     --stack-name "${Environment}-${ResourcePrefix}-$" \
