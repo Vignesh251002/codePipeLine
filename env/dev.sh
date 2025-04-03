@@ -14,6 +14,7 @@ export GitHubProviderType="GitHub"
 export pipeLine="codePipeLine"
 export codeBuild="codeBuild"
 export connection="connection"
+
 export codePileLineStackName="CP-stack"
 export DynamoDBTableName="MyTable"
 export cloudformationS3Bucket="cloudformation-bucket"
