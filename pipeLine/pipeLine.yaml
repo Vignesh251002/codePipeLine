@@ -8,14 +8,27 @@ Parameters:
   ResourcePrefix:
     Type: String
     Default: ""  
+
   Tags:
     Type: String
     Default: ""
+
+  Region:
+    Type: String
+    Default: "us-east-1"  
+
+  Stage:
+    Type: String
+    Default: ""  
+
   ArtifactBucketName:
     Type: String
     Default: ""
     Description: Name of the S3 bucket for storing artifacts.
 
+  codePileLineStackName:
+    Type: String
+    Default: ""
   PipelineName:
     Type: String
     Default: ""
@@ -111,6 +124,8 @@ Resources:
                 Action:
                   - s3:GetObject
                   - s3:PutObject
+                  - s3:ListBucket  
+                  - s3:ListObjectsV2
                 Resource: "*"
               - Effect: Allow
                 Action:
@@ -256,6 +271,12 @@ Resources:
           Value: !Ref LambdaFunctionName
         - Name: STACK_NAME
           Value: !Ref CloudFormationStackName  
+        - Name: REGION
+          Value: !Ref Region  
+        - Name: STAGE
+          Value: !Ref Stage  
+        - Name: TAGS
+          Value: !Ref Tags  
       Source:
         Type: CODEPIPELINE
         BuildSpec: "buildspec.yml"

@@ -37,14 +37,14 @@ echo "Deploying AWS CloudFormation Pipeline..."
 
 sam deploy \
     -t "${codePipelineTemplateFile}" \
-    --stack-name "${Environment}-${ResourcePrefix}" \
+    --stack-name "${Environment}-${ResourcePrefix}-${codePileLineStackName}" \
     --region "${REGION}" \
     --no-fail-on-empty-changeset \
     --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
     --parameter-overrides \
         "PipelineName=${pipeLine}" \
         "codeBuildName=${codeBuild}" \
-        "codePileLineStackName=${Environment}-${ResourcePrefix}-${codePileLineStackName}" \
+        "codePileLineStackName=${codePileLineStackName}" \
         "ArtifactBucketName=${codePipeLineS3Bucket}" \
         "GitHubConnectionName=${connection}" \
         "GitHubProviderType=${GitHubProviderType}" \
@@ -54,11 +54,13 @@ sam deploy \
         "GitHubBranch=${GitBranch}" \
         "GitHubOwner=${GitHubOwner}" \
         "Region=${REGION}" \
-        "Tags=${Tags}" \
+        "Tags=${tags}" \
+        "Stage=${Environment}" \
         "DynamoDBTableName=${DynamoDBTableName}" \
         "CloudFormationS3Bucket=${cloudformationS3Bucket}" \
         "TemplateFile=${cloudformationTemplateFile}" \
         "LambdaFunctionName=${LambdaFunctionName}" \
         "CloudFormationStackName=${cloudformationStackName}"
+
 
 echo "All deployments were successful!"
