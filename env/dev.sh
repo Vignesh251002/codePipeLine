@@ -18,7 +18,7 @@ export codePileLineStackName="CP-stack"
 export DynamoDBTableName="MyTable"
 export cloudformationS3Bucket="taskproject-cloudformation-bucket"
 export cloudformationTemplateFile="template/templateShell.yaml"
-export LambdaFunctionName="LambdaFunctionName"
+export LambdaFunctionName="MyFunction"
 export cloudformationStackName="CF-stack"
 
 
