@@ -20,7 +20,9 @@ export cloudformationS3Bucket="taskproject-cloudformation-bucket"
 export cloudformationTemplateFile="template/templateShell.yaml"
 export LambdaFunctionName="MyFunction"
 export cloudformationStackName="CF-stack"
-
+export deployBuildName="deployBuild"
+export layerBuildName="layerBuild"
+export unitTestBuildName="unitTestBuild"
 
 
 

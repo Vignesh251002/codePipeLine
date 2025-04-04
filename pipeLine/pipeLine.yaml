@@ -34,10 +34,20 @@ Parameters:
     Default: ""
     Description: Name of the CodePipeline.
 
-  codeBuildName:
+  deployBuildName:
     Type: String
-    Default: ""
-    Description: Name of the CodeBuild project.
+    Default: deployBuild
+    Description: "The name of the deployment build."
+  
+  layerBuildName:
+    Type: String
+    Default: layerBuild
+    Description: "The name of the layer build."
+  
+  unitTestBuildName:
+    Type: String
+    Default: unitTestBuild
+    Description: "The name of the unit test build."
 
   codePileLineStackName:
     Type: String
@@ -249,10 +259,41 @@ Resources:
                   - logs:*
                 Resource: "*"
 
-  CodeBuildProject:
+  UnitTestBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub ${Environment}-${ResourcePrefix}-${codeBuildName}
+      Name: !Sub ${Environment}-${ResourcePrefix}-${unitTestBuildName}
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:5.0
+        Type: LINUX_CONTAINER
+      Source:
+        Type: CODEPIPELINE
+      BuildSpec: buildspec-unittest.yml
+
+  # 🔹 Layer Packaging CodeBuild Project
+  LayerBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${Environment}-${ResourcePrefix}-${layerBuildName}
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:5.0
+        Type: LINUX_CONTAINER
+      Source:
+        Type: CODEPIPELINE
+      BuildSpec: buildspec-layer.yml
+
+  DeployBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${Environment}-${ResourcePrefix}-${deployBuildName}
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
@@ -306,6 +347,49 @@ Resources:
                 OutputArtifactFormat: "CODE_ZIP"
               OutputArtifacts:
                 - Name: SourceArtifact
+
+        - Name: UnitTest
+          Actions:
+            - Name: UnitTestAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              InputArtifacts:
+                - Name: UnittestArtifact  
+              OutputArtifacts:
+                - Name: LayerArtifact
+              Configuration:
+                ProjectName: !Ref UnitTestBuildProject
+
+        - Name: LayerPackaging
+          Actions:
+            - Name: CreateLayer
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              InputArtifacts:
+                - Name: UnittestArtifact  
+              OutputArtifacts:
+                - Name: LayerArtifact
+              Configuration:
+                ProjectName: !Ref LayerBuildProject
+
+        - Name: Deploy
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              InputArtifacts:
+                - Name: LayerArtifact 
+              Configuration:
+                ProjectName: !Ref DeployBuildProject
 
         - Name: Build
           Actions:
