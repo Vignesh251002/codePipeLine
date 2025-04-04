@@ -141,7 +141,7 @@ Resources:
                 Action:
                   - codebuild:StartBuild
                   - codebuild:BatchGetBuilds
-                Resource: !GetAtt CodeBuildProject.Arn
+                Resource: "*"
               - Effect: Allow
                 Action:
                   - cloudformation:CreateStack
@@ -272,7 +272,7 @@ Resources:
         Type: LINUX_CONTAINER
       Source:
         Type: CODEPIPELINE
-      BuildSpec: buildspec-unittest.yml
+        BuildSpec: buildspec-unittest.yml
 
   # 🔹 Layer Packaging CodeBuild Project
   LayerBuildProject:
@@ -295,7 +295,7 @@ Resources:
           Value: !Ref TemplateFile   
       Source:
         Type: CODEPIPELINE
-      BuildSpec: buildspec-layer.yml
+        BuildSpec: buildspec-layer.yml
 
   DeployBuildProject:
     Type: AWS::CodeBuild::Project
@@ -329,7 +329,7 @@ Resources:
           Value: !Ref Tags  
       Source:
         Type: CODEPIPELINE
-        BuildSpec: "buildspec.yml"
+        BuildSpec: "buildspec-deploy.yml"
       TimeoutInMinutes: 10
 
   CodePipeline:
@@ -366,9 +366,9 @@ Resources:
                 Provider: CodeBuild
                 Version: "1"
               InputArtifacts:
-                - Name: UnittestArtifact  
+                - Name: SourceArtifact
               OutputArtifacts:
-                - Name: LayerArtifact
+                - Name: UnittestArtifact
               Configuration:
                 ProjectName: !Ref UnitTestBuildProject
 
@@ -381,7 +381,7 @@ Resources:
                 Provider: CodeBuild
                 Version: "1"
               InputArtifacts:
-                - Name: UnittestArtifact  
+                - Name: UnittestArtifact 
               OutputArtifacts:
                 - Name: LayerArtifact
               Configuration:
@@ -399,19 +399,4 @@ Resources:
                 - Name: LayerArtifact 
               Configuration:
                 ProjectName: !Ref DeployBuildProject
-
-        - Name: Build
-          Actions:
-            - Name: CloudFormationPackage
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: "1"
-              InputArtifacts:
-                - Name: SourceArtifact
-              OutputArtifacts:
-                - Name: BuildArtifact
-              Configuration:
-                ProjectName: !Ref CodeBuildProject
 
