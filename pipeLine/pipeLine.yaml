@@ -286,6 +286,13 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:5.0
         Type: LINUX_CONTAINER
+        EnvironmentVariables:
+        - Name: ENVIRONMENT
+          Value: !Ref Environment
+        - Name: REGION
+          Value: !Ref Region 
+        - Name: TEMPLATE_FILE
+          Value: !Ref TemplateFile   
       Source:
         Type: CODEPIPELINE
       BuildSpec: buildspec-layer.yml
@@ -302,16 +309,18 @@ Resources:
         Image: aws/codebuild/standard:5.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
+        - Name: ENVIRONMENT
+          Value: !Ref Environment
         - Name: DYNAMODB_TABLE_NAME
           Value: !Ref DynamoDBTableName
         - Name: S3_BUCKET
-          Value: !Ref CloudFormationS3Bucket
+          Value: !Sub ${Environment}-${ResourcePrefix}-${CloudFormationS3Bucket}
         - Name: TEMPLATE_FILE
           Value: !Ref TemplateFile
         - Name: LAMBDA_FUNCTION_NAME
           Value: !Ref LambdaFunctionName
         - Name: STACK_NAME
-          Value: !Ref CloudFormationStackName  
+          Value: !Sub ${Environment}-${ResourcePrefix}-${CloudFormationStackName} 
         - Name: REGION
           Value: !Ref Region  
         - Name: STAGE
