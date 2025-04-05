@@ -293,6 +293,8 @@ Resources:
           Value: !Ref Region 
         - Name: TEMPLATE_FILE
           Value: !Ref TemplateFile   
+        - Name: S3_BUCKET
+          Value: !Sub ${Environment}-${ResourcePrefix}-${CloudFormationS3Bucket}  
       Source:
         Type: CODEPIPELINE
         BuildSpec: buildspec-layer.yml
@@ -397,6 +399,8 @@ Resources:
                 Version: "1"
               InputArtifacts:
                 - Name: LayerArtifact 
+              OutputArtifacts:
+                - Name: DeployArtifact    
               Configuration:
                 ProjectName: !Ref DeployBuildProject
 
